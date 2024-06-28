@@ -29,8 +29,8 @@ var tmos_task: tmos.Task(tmos_blueprint.Event) = undefined;
 var drivers = [_]common.Driver(Gpio){
     .{ .matrix = .{
         .config = &.{
-            .cols = &.{ Gpio.pin(.B11), Gpio.pin(.B10), Gpio.pin(.B7), Gpio.pin(.B4) },
-            .rows = &.{ Gpio.pin(.A14), Gpio.pin(.A15), Gpio.pin(.A5), Gpio.pin(.A4) },
+            .cols = &.{ Gpio.pin(.A4), Gpio.pin(.A5), Gpio.pin(.A15), Gpio.pin(.A14), Gpio.pin(.A13), Gpio.pin(.A12), Gpio.pin(.A11), Gpio.pin(.A10) },
+            .rows = &.{ Gpio.pin(.A8), Gpio.pin(.A9), Gpio.pin(.B15), Gpio.pin(.B14), Gpio.pin(.B13), Gpio.pin(.B12), Gpio.pin(.B7), Gpio.pin(.B4) },
         },
     } },
 };
