@@ -1,6 +1,8 @@
 let { parseKeyMap, .. } = import "kirei/ncl/keymap.ncl" in
 let { switch, case, not, is-key-pressed, lit, key-press, kc, mod-weak-anti, .. } = import "kirei/ncl/lib.ncl" in
 
+let { to_keycode_segments, qwerty, .. } = import "layouts.ncl" in
+
 let k = fun c => (lit (key-press c)) in
 
 # Keymap for the WABBLE-60 keyboard.
@@ -27,6 +29,17 @@ let make_array60 = fun
     k41, k42, k43, k44, k45, k46, k47, k48, k49, k4A, k4B, k4C,
     k51, k52, k53, k54, k55, k56, k57, k58, k59, k5A, k5B, k5C,
 ] in
+
+let make_keymap_with = fun alphas_layout =>
+    let segments = to_keycode_segments alphas_layout in
+    let { lhs1, lhs2, lhs3, .. } = segments in
+    let { rhs1, rhs2, rhs3, .. } = segments in
+    [kc.GRAVE, kc.N1, kc.N2, kc.N3, kc.N4, kc.N5, kc.N6, kc.N7, kc.N8, kc.N9, kc.N0, kc.DELETE] @
+    [kc.TAB]        @ lhs1 @ rhs1 @ [kc.BACKSPACE] @
+    [kc.ESCAPE]     @ lhs2 @ rhs2 @ [kc.QUOTE] @
+    [kc.LEFT_SHIFT] @ lhs3 @ rhs3 @ [kc.RIGHT_SHIFT] @
+    [kc.LEFT_CTRL, kc.LEFT_GUI, kc.LEFT_ALT, kc.TAB, kc.ESCAPE, kc.SPACE, kc.BACKSPACE, kc.ENTER, kc.DELETE, kc.RIGHT_ALT, kc.RIGHT_GUI, kc.RIGHT_CTRL]
+in
 
 # Helper function for `parseKeyMap`,
 #  which takes in the 60 keys of the 5x12 physical layout,
@@ -59,10 +72,5 @@ let to_logical_keymap = fun
         k(k18), k(k28), k(k38), k(k48), k(k58), k(k68), k(k78), k(k88),
     ] in
 
-make_array60
-    kc.GRAVE      kc.N1 kc.N2 kc.N3 kc.N4 kc.N5 kc.N6 kc.N7 kc.N8    kc.N9  kc.N0 kc.DELETE
-    kc.TAB        kc.Q  kc.W  kc.E  kc.R  kc.T  kc.Y  kc.U  kc.I     kc.O   kc.P  kc.BACKSPACE
-    kc.ESCAPE     kc.A  kc.S  kc.D  kc.F  kc.G  kc.H  kc.J  kc.K     kc.L   kc.SEMICOLON kc.QUOTE
-    kc.LEFT_SHIFT kc.Z  kc.X  kc.C  kc.V  kc.B  kc.N  kc.M  kc.COMMA kc.DOT kc.SLASH kc.RIGHT_SHIFT
-    kc.LEFT_CTRL  kc.LEFT_GUI kc.LEFT_ALT kc.TAB kc.ESCAPE kc.SPACE kc.BACKSPACE kc.ENTER kc.DELETE kc.RIGHT_ALT kc.RIGHT_GUI kc.RIGHT_CTRL
+make_keymap_with qwerty
 |> to_logical_keymap |> parseKeyMap
