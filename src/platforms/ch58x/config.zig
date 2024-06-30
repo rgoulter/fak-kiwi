@@ -32,5 +32,5 @@ pub const ble = .{
 
 pub const sys = .{
     .clock = clocks.SysClock.pll_60_mhz,
-    .led_1 = gpio.PinEnum.A8.pin(),
+    // .led_1 = gpio.PinEnum.A8.pin(),
 };

@@ -12,7 +12,7 @@ const gpio = @import("hal/gpio.zig");
 
 const debug = @import("debug.zig");
 
-const led_1 = config.sys.led_1;
+// const led_1 = config.sys.led_1;
 
 inline fn main() noreturn {
     pmu.useDcDc(true);
@@ -20,8 +20,8 @@ inline fn main() noreturn {
     clocks.use(config.sys.clock);
     clocks.useXt32k(false);
 
-    led_1.config(.output);
-    led_1.write(true);
+    // led_1.config(.output);
+    // led_1.write(true);
 
     debug.init();
 
