@@ -1,9 +1,9 @@
 # Keymap for the WABBLE-60 keyboard.
 
 let { parseKeyMap, .. } = import "kirei/ncl/keymap.ncl" in
-let { switch, case, not, is-key-code-pressed, lit, key-press, kc, mod, .. } = import "kirei/ncl/lib.ncl" in
+let { switch, case, and, is-key-code-pressed, lit, key-press, key-toggle, kc, mod, .. } = import "kirei/ncl/lib.ncl" in
 
-let { to_keycode_segments, qwerty, .. } = import "layouts.ncl" in
+let { to_keycode_segments, qwerty, dvorak, .. } = import "layouts.ncl" in
 
 # Impl. Note: Concepts to be familiar with:
 # Most of these are types which are described in `kirei/ncl/keymap.ncl`.
@@ -26,8 +26,12 @@ let { to_keycode_segments, qwerty, .. } = import "layouts.ncl" in
 # Constructs a kirei expression from the given keygroup.
 let k = fun c => (lit (key-press c)) in
 
+let keygroups_to_exprs = std.array.map k in
+let keydefs_to_exprs = std.array.map lit in
+
 # Alias, constructs a key definition from a keygroup.
 let kp = key-press in
+let kt = key-toggle in
 
 # Key definition for no key
 let no_key_def = {
@@ -86,8 +90,21 @@ let md = {
 #
 # Can consider MO(x) as KAx.
 let layers = {
+    # Impl. note: Layer conditions are evaluated in alphabetictal order.
+    ADJUST = kc.KA2,
     LOWER = kc.KA0,
     RAISE = kc.KA1,
+
+    # 'Extra' alphas layout.
+    X_DVORAK = kc.KA3,
+} in
+
+# Override layer condition used by `mix_layers`.
+let layer_conditions = {
+    ADJUST = and [
+        is-key-code-pressed layers.LOWER,
+        is-key-code-pressed layers.RAISE,
+    ],
 } in
 
 # Constructs a hold-tap keydef from `t` `h` keydefs.
@@ -101,6 +118,30 @@ let tap_hold = fun t h =>
     },
 } in
 
+# Make an array of key-defs for an "extra" alphas layout with the given alphas_layout.
+#
+# `alphas_layout` is a 30-char string for the alphabetical layout.
+# (This argument is typically a field from layouts.ncl).
+let extra_alphas_with_hrm = fun alphas_layout =>
+    let segments = to_keycode_segments alphas_layout in
+    let {
+        lhs1 = [a11, a12, a13, a14, a15], rhs1 = [a16, a17, a18, a19, a1A],
+        lhs2 = [a21, a22, a23, a24, a25], rhs2 = [a26, a27, a28, a29, a2A],
+        lhs3 = [a31, a32, a33, a34, a35], rhs3 = [a36, a37, a38, a39, a3A],
+    } = segments in
+    let s = fun t => tap_hold (kp t) md.LSFT in
+    let c = fun t => tap_hold (kp t) md.LCTL in
+    let g = fun t => tap_hold (kp t) md.LGUI in
+    let a = fun t => tap_hold (kp t) md.LALT in
+    let TTTTTTT = no_key_def in
+    [
+        TTTTTTT,  TTTTTTT, TTTTTTT, TTTTTTT, TTTTTTT, TTTTTTT,   TTTTTTT, TTTTTTT,  TTTTTTT,  TTTTTTT, TTTTTTT, TTTTTTT,
+        TTTTTTT,  kp(a11), kp(a12), kp(a13), kp(a14), kp(a15),   kp(a16), kp(a17),  kp(a18),  kp(a19), kp(a1A), TTTTTTT,
+        TTTTTTT,   a(a21),  g(a22),  c(a23),  s(a24), kp(a25),   kp(a26),  s(a27),   c(a28),   g(a29),  a(a2A), TTTTTTT,
+        TTTTTTT,  kp(a31), kp(a32), kp(a33), kp(a34), kp(a35),   kp(a36), kp(a37),  kp(a38),  kp(a39), kp(a3A), TTTTTTT,
+        TTTTTTT,  TTTTTTT, TTTTTTT, TTTTTTT, TTTTTTT, TTTTTTT,   TTTTTTT, TTTTTTT,  TTTTTTT,  TTTTTTT, TTTTTTT, TTTTTTT,
+    ] in
+
 # Record of arrays of kirei expressions for each layer.
 let layer_definitions = {
     # Lower (Shifted)
@@ -109,16 +150,25 @@ let layer_definitions = {
         ks.TILD,   ks.EXLM, ks.AT,   ks.HASH, ks.DLR,  ks.PERC,   ks.CIRC, ks.AMPR, ks.ASTR, ks.LPRN, ks.RPRN, ks.PIPE,
         kc.INSERT, kc.F1,   kc.F2,   kc.F3,   kc.F4,   kc.F5,     kc.F6,   ks.UNDS, ks.PLUS, ks.LCBR, ks.RCBR, ks.QUES,
         XXXXXXX,   kc.F7,   kc.F8,   kc.F9,   kc.F10,  kc.F11,    kc.F12,  XXXXXXX, kc.HOME, kc.PGUP, kc.PGDN, kc.END,
-        XXXXXXX,   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   XXXXXXX, XXXXXXX, kc.LEFT, kc.DOWN, kc.UP,   kc.RIGHT,
-    ] |> std.array.map k,
+        XXXXXXX,   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   XXXXXXX, layers.RAISE, kc.LEFT, kc.DOWN, kc.UP,   kc.RIGHT,
+    ] |> keygroups_to_exprs,
     # Raise:
     RAISE = [
         XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX,
         kc.GRAVE, kc.N1,   kc.N2,   kc.N3,   kc.N4,   kc.N5,     kc.N6,   kc.N7,    kc.N8,    kc.N9,   kc.N0,   kc.BACKSLASH,
         kc.DEL,   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   XXXXXXX, kc.MINUS, kc.EQUAL, kc.LBRC, kc.RBRC, kc.SLASH,
         XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX,
+        XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, layers.LOWER, XXXXXXX,   XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX,
+    ] |> keygroups_to_exprs,
+    ADJUST = let XXXXXXX = no_key_def in
+    [
         XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX,
-    ] |> std.array.map k,
+        XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX,
+        XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   XXXXXXX, XXXXXXX,  kt(layers.X_DVORAK),  XXXXXXX, XXXXXXX, XXXXXXX,
+        XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX,
+        XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX,
+    ] |> keydefs_to_exprs,
+    X_DVORAK = dvorak |> extra_alphas_with_hrm |> keydefs_to_exprs,
 } in
 
 # Constructs an array of keydefs given
@@ -167,21 +217,34 @@ let transpose_record_of_arrays = fun record_of_arrays =>
                             fields))
             record_value_lengths in
 
+let expr_is_no_key = (==) no_key_expr in
+
 # Construct array of kirei switch expressions
 # by mixing the base layer keydefs with the layer definitions.
+#
+# NOTE: Layer conditions are evaluated in alphabetictal order.
 #
 # `base_layer_keydefs` is an array of keydefs.
 # `fn_layers` is a record where values are array of kirei exprs.
 let mix_layers = fun base_layer_keydefs fn_layers =>
     let fn_layers' = transpose_record_of_arrays fn_layers in
     let mk_branches = fun i =>
+        # { <layer_name> = expr, .. }, e.g. { LOWER = lit (key-press kc.N2), .. }
         (std.array.at i fn_layers')
         |> std.record.map
             (fun layer_name layer_expr =>
-                let layer_keycode = std.record.get layer_name layers in
-                let is_layer = is-key-code-pressed layer_keycode in
-                case is_layer layer_expr)
-        |> std.record.values in
+                # Transparency key: for expr "no key", don't add a case branch.
+                if expr_is_no_key layer_expr then
+                    case (lit false) layer_expr
+                else
+                    let layer_keycode = std.record.get layer_name layers in
+                    let is_layer_fallback = is-key-code-pressed layer_keycode in
+                    let is_layer = std.record.get_or layer_name is_layer_fallback layer_conditions in
+                    case is_layer layer_expr)
+        |> std.record.values
+        # Filter out the `lit false` branches.
+        |> std.array.filter (fun { condition = cond, .. } => cond != (lit false))
+        in
     base_layer_keydefs
     |> std.array.map_with_index (fun i kd =>
         switch (mk_branches i) kd) in
