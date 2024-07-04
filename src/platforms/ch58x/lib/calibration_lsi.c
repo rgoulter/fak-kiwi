@@ -36,29 +36,6 @@ typedef enum
 
 } Cali_LevelTypeDef;
 
-static inline uint32_t SysTick_Config(uint64_t ticks)
-{
-    if((ticks - 1) > SysTick_LOAD_RELOAD_Msk)
-        return (1); /* Reload value impossible */
-
-    SysTick->CMP = ticks - 1; /* set reload register */
-    //PFIC_EnableIRQ(SysTick_IRQn);
-    SysTick->CTLR = SysTick_CTLR_INIT |
-                    SysTick_CTLR_STRE |
-                    SysTick_CTLR_STCLK |
-                    SysTick_CTLR_STIE |
-                    SysTick_CTLR_STE; /* Enable SysTick IRQ and SysTick Timer */
-    return (0);                       /* Function successful */
-}
-
-uint32_t SYS_GetSysTickCnt(void)
-{
-    uint32_t val;
-
-    val = SysTick->CNT;
-    return (val);
-}
-
 void sys_safe_access_enable() {
     *((volatile uint8_t*) 0x40001040) = 0x57;
     *((volatile uint8_t*) 0x40001040) = 0xA8;
