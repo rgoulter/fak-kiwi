@@ -37,8 +37,7 @@ var ble_config: c.bleConfig_t = blk: {
     cfg.rcCB = c.Lib_Calibration_LSI;
     cfg.MacAddr = config.ble.mac_addr;
 
-    cfg.WakeUpTime = WAKE_UP_RTC_MAX_TIME;
-    cfg.sleepCB = enterSleep;
+    cfg.idleCB = enterSleep;
 
     break :blk cfg;
 };
@@ -50,8 +49,10 @@ const SLEEP_RTC_MIN_TIME = 8; // 0.25ms
 const SLEEP_RTC_MAX_TIME = 2715440914; // RTC max 32K cycle (idk how long this is yet) minus 1hr
 
 pub const TxPower = enum(u8) {
-    dbm_n16 = c.LL_TX_POWEER_MINUS_16_DBM, // Negative
-    dbm_n12 = c.LL_TX_POWEER_MINUS_12_DBM,
+
+    dbm_n20 = c.LL_TX_POWEER_MINUS_20_DBM, // Negative
+    dbm_n15 = c.LL_TX_POWEER_MINUS_15_DBM,
+    dbm_n10 = c.LL_TX_POWEER_MINUS_10_DBM,
     dbm_n8 = c.LL_TX_POWEER_MINUS_8_DBM,
     dbm_n5 = c.LL_TX_POWEER_MINUS_5_DBM,
     dbm_n3 = c.LL_TX_POWEER_MINUS_3_DBM,
@@ -61,13 +62,12 @@ pub const TxPower = enum(u8) {
     dbm_2 = c.LL_TX_POWEER_2_DBM,
     dbm_3 = c.LL_TX_POWEER_3_DBM,
     dbm_4 = c.LL_TX_POWEER_4_DBM,
-    dbm_5 = c.LL_TX_POWEER_5_DBM,
-    dbm_6 = c.LL_TX_POWEER_6_DBM,
 
     pub fn value(comptime self: @This()) i8 {
         return switch (self) {
-            .dbm_n16 => -16,
-            .dbm_n12 => -12,
+            .dbm_n20 => -20,
+            .dbm_n15 => -15,
+            .dbm_n10 => -10,
             .dbm_n8 => -8,
             .dbm_n5 => -5,
             .dbm_n3 => -3,
@@ -77,8 +77,6 @@ pub const TxPower = enum(u8) {
             .dbm_2 => 2,
             .dbm_3 => 3,
             .dbm_4 => 4,
-            .dbm_5 => 5,
-            .dbm_6 => 6,
         };
     }
 };
