@@ -179,7 +179,6 @@ handle_reset:
     ori t0, t0, 3
 	csrw mtvec, t0
 
-	la t0, main
-	csrw mepc, t0
-	
-	mret
+    j _zigstart
+
+.extern _zigstart
