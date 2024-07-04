@@ -68,7 +68,7 @@
  *
  * @return  0-SUCCESS  (!0)-FAILURE
  */
-extern uint32_t FLASH_EEPROM_CMD( uint8_t cmd, uint32_t StartAddr, void *Buffer, uint32_t Length );
+extern long FLASH_EEPROM_CMD( char cmd, long StartAddr, void *Buffer, long Length );
 
 /**
  * @brief   start FlashROM I/O
