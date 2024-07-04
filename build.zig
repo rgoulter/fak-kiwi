@@ -171,8 +171,8 @@ pub fn build(b: *std.Build) void {
             exe.addAssemblyFile(.{ .path = "src/platforms/ch58x/startup.S" });
 
             exe.addCSourceFiles(&.{
-                "src/platforms/ch58x/lib/libISP583.a",
-                "src/platforms/ch58x/lib/LIBCH58xBLE.a",
+                "src/platforms/ch58x/lib/libISP592.a",
+                "src/platforms/ch58x/lib/LIBCH59xBLE.a",
                 "src/platforms/ch58x/lib/calibration_lsi.c",
             }, &.{});
 
