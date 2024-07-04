@@ -1,18 +1,19 @@
 /********************************** (C) COPYRIGHT *******************************
- * https://github.com/WeActStudio/WeActStudio.WCH-BLE-Core/blob/master/Examples/CH582/template/Startup/startup_CH583.S
- * File Name          : startup_ch58x.s
+ * File Name          : startup_CH59x.s
  * Author             : WCH
  * Version            : V1.0.0
  * Date               : 2021/02/25
  * Description        :
+ *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
- * SPDX-License-Identifier: Apache-2.0
+ * Attention: This software (modified or not) and binary are used for 
+ * microcontroller manufactured by Nanjing Qinheng Microelectronics.
  *******************************************************************************/
 
 	.section	.init,"ax",@progbits
-	.global	_assembly_start
+	.global	_start
 	.align	1
-_assembly_start:
+_start:
 	j	handle_reset
 
     .section    .vector,"ax",@progbits
@@ -44,7 +45,7 @@ _vector_base:
     .word   BB_IRQHandler              /* BLEB */
     .word   LLE_IRQHandler             /* BLEL */
     .word   USB_IRQHandler             /* USB */
-    .word   USB2_IRQHandler			   /* USB2 */
+    .word   0			 
     .word   TMR1_IRQHandler            /* TMR1 */
     .word   TMR2_IRQHandler            /* TMR2 */
     .word   UART0_IRQHandler           /* UART0 */
@@ -75,7 +76,6 @@ _vector_base:
     .weak   BB_IRQHandler
     .weak   LLE_IRQHandler
     .weak   USB_IRQHandler
-    .weak   USB2_IRQHandler
     .weak   TMR1_IRQHandler
     .weak   TMR2_IRQHandler
     .weak   UART0_IRQHandler
@@ -89,33 +89,34 @@ _vector_base:
     .weak   UART3_IRQHandler
     .weak   WDOG_BAT_IRQHandler
 
-NMI_Handler:         1:  j 1b
-HardFault_Handler:   1:  j 1b
-Ecall_M_Mode_Handler:   1:  j 1b
-Ecall_U_Mode_Handler:   1:  j 1b
-Break_Point_Handler:   1:  j 1b
-SysTick_Handler:     1:  j 1b
-SW_Handler:          1:  j 1b
-TMR0_IRQHandler:     1:  j 1b
-GPIOA_IRQHandler:    1:  j 1b
-GPIOB_IRQHandler:    1:  j 1b
-SPI0_IRQHandler:     1:  j 1b
-BB_IRQHandler:       1:  j 1b
-LLE_IRQHandler:      1:  j 1b
-USB_IRQHandler:      1:  j 1b
-USB2_IRQHandler:      1:  j 1b
-TMR1_IRQHandler:     1:  j 1b
-TMR2_IRQHandler:     1:  j 1b
-UART0_IRQHandler:    1:  j 1b
-UART1_IRQHandler:    1:  j 1b
-RTC_IRQHandler:      1:  j 1b
-ADC_IRQHandler:      1:  j 1b
-I2C_IRQHandler:		 1:  j 1b
-PWMX_IRQHandler:     1:  j 1b
-TMR3_IRQHandler:     1:  j 1b
-UART2_IRQHandler:    1:  j 1b
-UART3_IRQHandler:    1:  j 1b
-WDOG_BAT_IRQHandler: 1:  j 1b
+NMI_Handler:
+HardFault_Handler:
+Ecall_M_Mode_Handler:
+Ecall_U_Mode_Handler:
+Break_Point_Handler:
+SysTick_Handler:
+SW_Handler:
+TMR0_IRQHandler:
+GPIOA_IRQHandler:
+GPIOB_IRQHandler:
+SPI0_IRQHandler:
+BB_IRQHandler:
+LLE_IRQHandler:
+USB_IRQHandler:
+TMR1_IRQHandler:
+TMR2_IRQHandler:
+UART0_IRQHandler:
+UART1_IRQHandler:
+RTC_IRQHandler:
+ADC_IRQHandler:
+I2C_IRQHandler:
+PWMX_IRQHandler:
+TMR3_IRQHandler:
+UART2_IRQHandler:
+UART3_IRQHandler:
+WDOG_BAT_IRQHandler: 
+1:  
+	j 1b
 
 	.section	.handle_reset,"ax",@progbits
 	.weak	handle_reset
@@ -163,10 +164,10 @@ handle_reset:
 	addi a0, a0, 4
 	bltu a0, a1, 1b
 2:
-	/* ï¿½ï¿½Ë®ï¿½ß¿ï¿½ï¿½ï¿½Î» & ï¿½ï¿½Ì¬Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½Î» */
+	/* Á÷Ë®Ïß¿ØÖÆÎ» & ¶¯Ì¬Ô¤²â¿ØÖÆÎ» */
 	li t0, 0x1f
 	csrw 0xbc0, t0
-	/* ï¿½ï¿½Ç¶ï¿½ï¿½ï¿½Ð¶Ï¡ï¿½Ó²ï¿½ï¿½Ñ¹Õ»ï¿½ï¿½ï¿½ï¿½ */
+	/* ´ò¿ªÇ¶Ì×ÖÐ¶Ï¡¢Ó²¼þÑ¹Õ»¹¦ÄÜ */
 	li t0, 0x3
 	csrw 0x804, t0
 	
@@ -174,10 +175,11 @@ handle_reset:
     csrs mstatus, t0
 	la t0, _vector_base
 
-	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½Îªï¿½ï¿½ï¿½Ôµï¿½Ö·Ä£Ê½ */
+	/* ÅäÖÃÏòÁ¿±íÄ£Ê½Îª¾ø¶ÔµØÖ·Ä£Ê½ */
     ori t0, t0, 3
 	csrw mtvec, t0
 
-    j _zigstart
-
-.extern _zigstart
+	la t0, main
+	csrw mepc, t0
+	
+	mret
