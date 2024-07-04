@@ -1,3 +1,3 @@
-#include "CH58xBLE_LIB.h"
+#include "CH59xBLE_LIB.h"
 
 void Lib_Calibration_LSI(void);
