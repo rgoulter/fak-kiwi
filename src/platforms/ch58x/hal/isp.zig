@@ -1,1 +1,1 @@
-pub usingnamespace @cImport(@cInclude("ISP583.h"));
+pub usingnamespace @cImport(@cInclude("ISP592.h"));
