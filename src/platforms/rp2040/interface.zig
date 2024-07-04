@@ -20,8 +20,9 @@ var umm_heap = std.mem.zeroes([16 * 1024]u8);
 var drivers = [_]common.Driver(Gpio){
     .{ .matrix = .{
         .config = &.{
-            .cols = &.{ Gpio.pin(.P7), Gpio.pin(.P8), Gpio.pin(.P9), Gpio.pin(.P6), Gpio.pin(.P10), Gpio.pin(.P21), Gpio.pin(.P28), Gpio.pin(.P22), Gpio.pin(.P26), Gpio.pin(.P27) },
-            .rows = &.{ Gpio.pin(.P11), Gpio.pin(.P12), Gpio.pin(.P13), Gpio.pin(.P5), Gpio.pin(.P20), Gpio.pin(.P19), Gpio.pin(.P18), Gpio.pin(.P29) },
+            // PyKey40 Lite
+            .cols = &.{ Gpio.pin(.P0), Gpio.pin(.P1), Gpio.pin(.P2), Gpio.pin(.P3), Gpio.pin(.P4), Gpio.pin(.P5), Gpio.pin(.P6), Gpio.pin(.P7), Gpio.pin(.P8), Gpio.pin(.P9), Gpio.pin(.P10), Gpio.pin(.P11) },
+            .rows = &.{ Gpio.pin(.P14), Gpio.pin(.P15), Gpio.pin(.P16), Gpio.pin(.P17) },
         },
     } },
 };
