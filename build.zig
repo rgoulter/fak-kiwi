@@ -14,9 +14,9 @@ const all_test_names = [_][]const u8{
 };
 
 pub fn build(b: *std.Build) void {
-    const umm = b.createModule(.{ .source_file = .{ .path = "src/lib/umm/umm.zig" } });
-    const uuid = b.createModule(.{ .source_file = .{ .path = "src/lib/uuid/uuid.zig" } });
-    const s2s = b.createModule(.{ .source_file = .{ .path = "src/lib/s2s/s2s.zig" } });
+    const umm = b.createModule(.{ .root_source_file = .{ .path = "src/lib/umm/umm.zig" } });
+    const uuid = b.createModule(.{ .root_source_file = .{ .path = "src/lib/uuid/uuid.zig" } });
+    const s2s = b.createModule(.{ .root_source_file = .{ .path = "src/lib/s2s/s2s.zig" } });
     _ = s2s;
 
     const microzig = @import("microzig").init(b, "microzig");
@@ -67,12 +67,12 @@ pub fn build(b: *std.Build) void {
     options.addOption(bool, "embedded_key_map", embedded_key_map);
 
     const keymap = b.createModule(.{
-        .source_file = nickel.captureStdOut(),
+        .root_source_file = nickel.captureStdOut(),
         .dependencies = &.{},
     });
 
     const kirei = b.createModule(.{
-        .source_file = .{ .path = "src/kirei/engine.zig" },
+        .root_source_file = .{ .path = "src/kirei/engine.zig" },
         .dependencies = &.{
             .{ .name = "keymap", .module = keymap },
             .{ .name = "config", .module = options.createModule() },
@@ -80,7 +80,7 @@ pub fn build(b: *std.Build) void {
     });
 
     const common = b.createModule(.{
-        .source_file = .{ .path = "src/common/common.zig" },
+        .root_source_file = .{ .path = "src/common/common.zig" },
         .dependencies = &.{
             .{ .name = "kirei", .module = kirei },
         },
@@ -125,7 +125,7 @@ pub fn build(b: *std.Build) void {
             });
 
             exe.addModule("test", b.createModule(.{
-                .source_file = nickel_test.captureStdOut(),
+                .root_source_file = nickel_test.captureStdOut(),
                 .dependencies = &.{},
             }));
 
@@ -141,7 +141,7 @@ pub fn build(b: *std.Build) void {
                 .name = name,
                 .target = rp2040.boards.raspberry_pi.pico,
                 .optimize = optimize,
-                .source_file = .{ .path = root_path },
+                .root_source_file = .{ .path = root_path },
             })
         else
             null;
