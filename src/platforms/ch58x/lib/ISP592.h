@@ -19,6 +19,10 @@
      256 bytes/page for writing, EEPROM_WRITE support one byte or more byte writing, but multiple of 256 is the best,
      0.25KB/4KB (256/4096 bytes) bytes/block for erasing, so multiple of 256 or 4096 is the best */
 
+// Required for Zig
+#ifndef NULL
+#define NULL ((void*)0)
+#endif
 
 #ifndef EEPROM_PAGE_SIZE
 #define EEPROM_PAGE_SIZE    256                       // Flash-ROM & Data-Flash page size for writing
