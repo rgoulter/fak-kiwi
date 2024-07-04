@@ -89,6 +89,7 @@ fn tmosEvtStartDevice() void {
         @constCast(&c.gapBondCBs_t{
             .passcodeCB = null,
             .pairStateCB = onGapPairStateChange,
+            .oobCB = null,
         }),
         @constCast(&c.gapRolesCBs_t{
             .pfnStateChange = onGapStateChange,
