@@ -28,8 +28,6 @@ var ble_config: c.bleConfig_t = blk: {
     cfg.readFlashCB = libReadFlash;
     cfg.writeFlashCB = libWriteFlash;
 
-    cfg.SelRTCClock = 1; // 32KHz LSI
-
     cfg.ConnectNumber =
         (config.ble.peripheral_max_connections & 3) | (config.ble.central_max_connections << 2);
 
