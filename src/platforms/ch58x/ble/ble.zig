@@ -82,6 +82,8 @@ pub const TxPower = enum(u8) {
 };
 
 pub fn init() !void {
+    c.init_lle_irqlibhandlerlocation();
+
     try initBleModule();
     rtc.init();
     try tmos.init();

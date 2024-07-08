@@ -169,11 +169,13 @@ pub fn build(b: *std.Build) void {
             const link_file_path = "src/platforms/ch58x/link.ld";
             exe.setLinkerScriptPath(.{ .path = link_file_path });
             exe.addAssemblyFile(.{ .path = "src/platforms/ch58x/startup.S" });
+            exe.addAssemblyFile(.{ .path = "src/platforms/ch58x/lib/ble_task_scheduler.S" });
 
             exe.addCSourceFiles(&.{
                 "src/platforms/ch58x/lib/libISP592.a",
                 "src/platforms/ch58x/lib/LIBCH59xBLE.a",
                 "src/platforms/ch58x/lib/calibration_lsi.c",
+                "src/platforms/ch58x/lib/lib_irq.c",
             }, &.{});
 
             exe.addIncludePath(.{ .path = "src/platforms/ch58x/lib" });
