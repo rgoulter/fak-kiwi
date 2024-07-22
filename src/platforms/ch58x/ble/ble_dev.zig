@@ -135,6 +135,11 @@ fn onGapStateChange(new_state: c.gapRole_States_t, event: [*c]c.gapRoleEvent_t) 
     } else if (gap_state == c.GAPROLE_CONNECTED and new_state != c.GAPROLE_CONNECTED) {
         std.log.debug("ble_dev: GAP state disconnected", .{});
 
+        if(event.*.gap.opcode == c.GAP_LINK_TERMINATED_EVENT)
+        {
+            std.log.debug("Disconnected: Link Terminate Reason:{}\r\n", .{event.*.linkTerminate.reason});
+        }
+
         conn_secure = false;
         gap_conn_handle = c.GAP_CONNHANDLE_INIT;
 
@@ -153,12 +158,16 @@ fn onGapPairStateChange(conn_handle: u16, state: u8, status: u8) callconv(.C) vo
         if (status == c.SUCCESS) {
             std.log.debug("ble_dev: Pairing complete", .{});
             conn_secure = true;
+        } else {
+            std.log.debug("ble_dev: gap pair state: pairing failed", .{});
         }
         // pairing_status = status;
     } else if (state == c.GAPBOND_PAIRING_STATE_BONDED) {
         if (status == c.SUCCESS) {
             std.log.debug("ble_dev: Pairing bonded", .{});
             conn_secure = true;
+        } else {
+            std.log.debug("ble_dev: gap pair state: bond failed", .{});
         }
     }
 }
