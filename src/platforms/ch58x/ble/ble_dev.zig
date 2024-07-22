@@ -9,8 +9,6 @@ const tmos = @import("tmos.zig");
 
 const Duration = @import("../duration.zig").Duration;
 
-const DeviceInfoService = @import("dev_info_service.zig");
-const BatteryService = @import("battery_service.zig");
 const HidService = @import("hid_service.zig");
 
 const blueprint = tmos.TaskBlueprint{
@@ -62,8 +60,6 @@ pub fn init() void {
     _ = c.GGS_AddService(c.GATT_ALL_SERVICES);
     _ = c.GATTServApp_AddService(c.GATT_ALL_SERVICES);
 
-    DeviceInfoService.register();
-    BatteryService.register();
     HidService.register();
 
     tmos_task.setEvent(.start_device);
