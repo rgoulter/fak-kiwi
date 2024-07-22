@@ -29,6 +29,7 @@ var ble_config: c.bleConfig_t = blk: {
     cfg.SNVNum = 1;
     cfg.readFlashCB = libReadFlash;
     cfg.writeFlashCB = libWriteFlash;
+    cfg.staCB = libStatusErrorCb;
 
     cfg.ConnectNumber =
         (config.ble.peripheral_max_connections & 3) | (config.ble.central_max_connections << 2);
@@ -113,6 +114,10 @@ fn initBleModule() !void {
         c.ERR_CLOCK_SELECT_CONFIG => error.ClockSelectConfig,
         else => unreachable,
     };
+}
+
+fn libStatusErrorCb(code: u8, status: u32) callconv(.C) void {
+    std.log.debug("Lib status error: code:{} status: {}\r\n", .{code, status});
 }
 
 fn libReadFlash(addr: u32, num: u32, pBuf: [*c]u32) callconv(.C) u32 {
